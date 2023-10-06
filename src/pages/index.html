@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bun + Replit Chat</title>
+  <link href="/public/styles/main.css" rel="stylesheet">
+  <script src="/public/scripts/htmx.min.js"></script>
+  <script src="/public/scripts/htmx-ws.js"></script>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-200">
+  <div class="bg-white rounded-lg shadow p-6 m-4 w-full md:max-w-lg" hx-ext="ws" ws-connect="/chatbot">
+    <h1 class="text-2xl font-bold text-center">ModelFarm + Bun + HTMX ⚡️</h1>
+    <section id="messages" class="my-4"></section>
+    <form 
+      id="chat-form"
+      hx-on::ws-before-send="beforeChatRequest()" 
+      hx-on::ws-after-send="afterChatRequest()" 
+      class="flex gap-4"
+      ws-send
+    >
+      <input type="text" name="message" class="w-full border focus:ring-indigo-500 focus:border-indigo-500 overflow-auto mx-auto rounded-md shadow-sm sm:text-sm border-gray-300 p-2" placeholder="Type your message here" autocomplete="off" enterkeyhint="send" required autofocus>
+      <input type="hidden" name="conversation" id="conversation" value="" hidden>
+      <button id="chat-button" type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+        Send
+      </button>
+    </form>
+  </div>
+  
+  <script>
+    const commonBtn = 'py-2 px-4 font-bold rounded-md text-white';
+    
+    function beforeChatRequest() {
+      const button = document.getElementById('chat-button');
+      button.setAttribute('disabled', '');
+      button.innerText = 'Sending...';
+      button.className = commonBtn + ' bg-gray-500 cursor-not-allowed';
+    }
+    function afterChatRequest() {
+      document.getElementById('chat-form').reset()
+      const button = document.getElementById('chat-button');
+      button.removeAttribute('disabled');
+      button.innerText = 'Send';
+      button.className = commonBtn + ' bg-blue-500 hover:bg-blue-700';
+    }
+  </script>  
+  <script src="https://replit.com/public/js/replit-badge-v2.js" theme="dark" position="bottom-right"></script>
+</body>
+</html>
